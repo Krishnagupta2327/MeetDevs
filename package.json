@@ -1,0 +1,14 @@
+{
+  "name": "meetdevsbackend",
+  "version": "1.0.0",
+  "description": "MeetDevs is being created!!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Krishna Gupta",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
