@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/krishnagupta/Desktop/MeetDevsBackend/src/output/a'
+relocations:     []
+...
