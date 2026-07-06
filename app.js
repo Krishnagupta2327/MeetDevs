@@ -5,12 +5,13 @@
 // const {validateUser} = require('./utils/validate.js');
 // const User = require("./models/user.js");
 const express = require('express');
+const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const connectDB = require('./config/database.js');
-const authRouter = require('./route/auth.js');
-const profileRouter = require('./route/profile.js');
-const connectionRouter = require('./route/connectonRequest.js');
-const userRouter = require("./route/user.js")
+const connectDB = require('./src/config/database.js');
+const authRouter = require('./src/route/auth.js');
+const profileRouter = require('./src/route/profile.js');
+const connectionRouter = require('./src/route/connectonRequest.js');
+const userRouter = require("./src/route/user.js")
 const app = express();
 connectDB()
 .then(() => {
@@ -22,14 +23,32 @@ connectDB()
 .catch((err)=>{
     console.log("Error connecting to DB!!",err);
 });
+
+
 app.use(express.json());
 app.use(cookieParser());
+
+app.use(cors({
+    origin:"192.168.0.100:5173",
+    credentials:true
+}));
+
+app.use((req,res,next)=>{
+    console.log(req.method, req.url);
+    next();
+});
+app.get("/",(req,res)=>{
+   " hd";
+   console.log('hii');
+   res.send("hii");
+});
 app.use("/", authRouter);
 app.use("/",profileRouter)
 app.use("/", connectionRouter);
 app.use("/", userRouter);
 
-
+// const now = new Date();
+// console.log(now.toda);
 // app.patch("/update", async (req,res)=>{
 //     const userId= req.body._id;
 //     const data= req.body;

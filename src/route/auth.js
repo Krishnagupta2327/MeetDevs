@@ -10,37 +10,41 @@ const validator = require('validator');
 authRouter.post("/signup", async (req,res) =>{
     try{
         validateUser(req);
-        const {firstName, lastName, age, city, password, email, contactNo} = req.body;
+        const {firstName, lastName, age, city, password, email, contactNo,imgUrl, gender, about} = req.body;
+        const findUser= await User.findOne({ email:email});
+        if(findUser) throw new Error("Email already registered!!");
+// 
         const hashedPassword = await bcrypt.hash(password,11);
-        const user = new User({firstName, lastName, age, city, password:hashedPassword, email, contactNo});
+        const user = new User({firstName, lastName, age, city, password:hashedPassword, email, contactNo,imgUrl, about, gender});
         await user.save();
         res.status(201).send("user signed up succesfully");
     }
     catch(err){
-        res.status(500).send("error while signing up user => " +err);
+        console.log(err);
+        res.status(500).send(err.message);
     }
 });
 authRouter.post("/login", async (req,res) =>{
     try{
         const {email, password} = req.body;
         if(!email || !password){
-            throw new Error ("Email and Password are requied to login!!");
+            throw new Error ("Email and Password are requied to login!!!");
         }
         if(!validator.isEmail(email)){
             throw new Error("Email is invalid!!");
         }
+        
         const user =  await User.findOne({
             email:email
-        }).select(["firstName","lastName"]);
+        }).select(["firstName","lastName","age","city","imgUrl","about","email","contactNo","password"]);
         if(!user){
             throw new Error("Invalid Credentials!!");
         }
-        console.log(user);
         const userPassword = user.password;
-        // const isValid =   await bcrypt.compare(password, userPassword);\
-        const isValid =  user.validatePassword(password);
+        const isValid =   await bcrypt.compare(password, userPassword);
+        // const isValid =  await user.validatePassword(password);
         if(!isValid){
-            throw new Error("Invalid Credentials!!");
+            throw new Error("Invalid Credentialss!!");
         }
         const token = jwt.sign({
             _id: user._id
@@ -48,25 +52,23 @@ authRouter.post("/login", async (req,res) =>{
             expiresIn: "7d"
         });
         // const data =user.select(["firstName","lastName"]);
-        res.cookie("token", token).status(200);
-        res.json({
+        res.cookie("token", token).status(200).json({
             "message":"User logged in succesfully",
             "data": user
         });
     }
     catch(err){
-        res.json({
-             "message": `Error while logging in ${err}`,
+        res.status(300).json({
+             "message": `Error while logging in : ${err}`,
               "Error": err.message
 
         });
     }
 });
-authRouter.post("/logout", authCookie,(req, res)=>{
-    const token= jwt.sign({},"SECRET_KEY",{
-        expiresIn:"0d"
-    });
+authRouter.post("/logout", authCookie, (req, res)=>{
+   console.log('hiii');
+   res.clearCookie("token");
 
-    res.cookie("token",token).send(`${req.user.firstName} logged out succesfully`);
+    res.send(`${req.user.firstName} logged out succesfully`);
 });
 module.exports = authRouter;

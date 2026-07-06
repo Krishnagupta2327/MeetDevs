@@ -1,38 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Document</title>
 </head>
 <body>
-    <table border="1" cellpadding="5" cellspacing="0">
-        <tr>
-            <td>No.</td>
-            <td>Name</td>
-            <td>salary</td>
-            <td>type</td>
-        </tr>
-        <tr>
-        <td>1</td>
-        <td>x</td>
-        <td>100</td>
-        <td rowspan="3">C</td><
-        </tr>
-        <tr>
-            <td>2</td>
-            <td>y</td>
-            <td>200</td>
-        </tr>
-        <tr>
-            <td>3</td>
-            <td>z</td>
-            <td>300</td>
-        </tr>
-        <tr >
-            <td colspan="2">total exp</td>
-            <td> 600</td>z
-        </tr>
-    </table>
+      <script type="text/javascript">
+
+let n=parseInt(prompt("Enter n:"));
+if(n<2){
+      alert(n+" is not prime");
+}
+else{
+      let flag=true;
+      let a=Math.sqrt(n);
+      for(let i=2;i<=a;i++){
+            if(n%i==0){
+                  flag=false;
+                  break;
+            }
+      }
+      if(flag==true){
+            alert(n+" is prime");
+      }
+      else{
+            alert(n+" is not prime");
+      }
+}
+</script>
 </body>
 </html>

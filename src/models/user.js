@@ -2,23 +2,24 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
+const { kMaxLength } = require('buffer');
 const userSchema = new mongoose.Schema({
     firstName:{
         type: String,
         required: true,
-        unique: true,
+        // unique: true,
         trim: true,
-        lowercase:true,
+        // lowercase:true,
          //default: 'Johny'
     },
     lastName:{
         type: String,
-        lowercase:true
+        // lowercase:true
     },
     age:{
         type: Number,
         validate: (age)=>{
-            if(age<0 || age>100) {
+            if(age<0 || age>=100) {
                 throw new Error("Age must be between 0 and 100");
             }
         }
@@ -38,21 +39,41 @@ const userSchema = new mongoose.Schema({
     },
     contactNo: {
         type: String
+        
     },
     password:{
         type: String
+    },
+    about:{
+        type:String,
+        maxLength: 200
+        
+    },
+    imgUrl:{
+        type:String
+    },
+    city:{
+        type:String
+    },
+    gender:{
+        type: String,
+        enum:["male","female"]
     }
+
 },{
     timestamps: true
 });
 userSchema.methods.validatePassword = async function(passwordByUser){
     try{
     const user = this;
+    // console.log('aa');
+    // return true;
     const isValid = await bcrypt.compare(passwordByUser, user.password);
+    // console.log('a');
     if(isValid) return true;
     else return false;
     }catch(err){
-        console.log("erroe while debugging password! "+err);
+        console.log("error while debugging password! "+err);
     }
 
 };

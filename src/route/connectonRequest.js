@@ -12,9 +12,9 @@ connectionRouter.post("/connectionRequest/send/:toUserId/:status",authCookie, as
 
     const allowedStatus =["interested","ignore"];
     try{
-    if(!allowedStatus.includes(status)){
-        throw new Error("status is not allowed!!");
-    }
+    // if(!allowedStatus.includes(status)){
+    //     throw new Error("status is not allowed!!");
+    // }
     const toUser = await User.findById(toUserId);
     if(!toUser){
         return res.send("UserID is invalid...");
@@ -36,7 +36,7 @@ connectionRouter.post("/connectionRequest/send/:toUserId/:status",authCookie, as
         throw new Error("connectionRequest already exists!!");
     }
     if(fromUserId.equals(toUserId)){
-        throw new Error("you can not sen d connectionrequest to yourself");
+        throw new Error("you can not send connectionrequest to yourself");
     }
 
 
@@ -46,7 +46,7 @@ connectionRouter.post("/connectionRequest/send/:toUserId/:status",authCookie, as
         status:status
     });
     const data = await connectionRequestt.save();
-    res.json({
+    res.status(200).json({
         "message":`connection request is ${status}`,
         "data": data
     });}
@@ -55,41 +55,41 @@ connectionRouter.post("/connectionRequest/send/:toUserId/:status",authCookie, as
     }
 });
 connectionRouter.post("/connectionRequest/review/:userId/:status",authCookie, async(req,res)=>{
-    const allowedStatus = ["accepted", "rejected" ];
+    const allowedStatus = ["accepted", "rejected"];
     const loggedInUser= req.user;
     const toReviewUser = req.params.userId;
     const status = req.params.status;
     try{
         if(!allowedStatus.includes(status)){
-            res.send(`${status } is not valid status`);
+            return res.send(`${status } is not valid status`);
         }
-        const user = User.findById(toReviewUser._id);
+        const user = await  User.findById(toReviewUser);
         if(!user){
-            res.send("Reviewing user does not exist");
+            return res.send("Reviewing user does not exist");
         }
-        if(loggedInUser._id.equals(toReviewUser._id)){
-            res.send("You can not review yourself");
+        if(loggedInUser._id.equals(toReviewUser)){
+            return res.send("You can not review yourself");
         }
         const isExisting = await connectionRequest.find({
             $or:[
                 {
                     toUserId:loggedInUser._id,
-                    fromUserId :toReviewUser._id,
+                    fromUserId :toReviewUser,
                     status:"accepted"
                 },
                 {
                     fromUserId:loggedInUser._id,
-                    toUserId :toReviewUser._id,
+                    toUserId :toReviewUser,
                     status:"rejected"
                 },
                 {
                     toUserId:loggedInUser._id,
-                    fromUserId :toReviewUser._id,
+                    fromUserId :toReviewUser,
                     status:"rejected"
                 },
                 {
                     fromUserId:loggedInUser._id,
-                    toUserId :toReviewUser._id,
+                    toUserId :toReviewUser,
                     status: "accepted"
                 }
             ]
@@ -101,12 +101,12 @@ connectionRouter.post("/connectionRequest/review/:userId/:status",authCookie, as
             $or:[
                 {
                     toUserId:loggedInUser._id,
-                    fromUserId: toReviewUser._id,
+                    fromUserId: toReviewUser,
                     status:"interested"
 
                 },
                 {
-                    toUserId: toReviewUser._id,
+                    toUserId: toReviewUser,
                     fromUserId:loggedInUser._id,
                     status:"interested"
                 }
@@ -128,7 +128,7 @@ connectionRouter.post("/connectionRequest/review/:userId/:status",authCookie, as
 
     }
     catch(err){
-        res.status(500).send("Error while reviewing connectionRequest "+ err);
+        res.status(500).send("Error while reviewing connectionRequest "+ err.message);
     }
 });
 module.exports = connectionRouter;

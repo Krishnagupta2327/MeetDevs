@@ -5,31 +5,29 @@ const User= require("../models/user.js");
 const {authCookie}= require("../middlewares/auth.js");
 
 
-profileRouter.get('/profile/view',authCookie ,async (req,res)=>{
+profileRouter.get('/profile/view' ,authCookie ,async (req,res)=>{
     try{
-        // const cookie = req.cookies;
-        // const {token} = cookie;
-        // if(!token){
-        //     throw new Error("User not logged in!!");
-        // }
-        // const encodedData =  jwt.verify(token,  "SECRET_KEY");
-        // const {_id}= encodedData;
-        // const user = await User.findById(_id);
-        const data= await User.findById(req.user._id)
-        .select(["firstName","lastName","age"]);
-        res.status(200).json({
-            "message": "User profile is ready   to view.",
-            'user': data
-        });
+       const uid= req.user._id;
+
+        const data= await User.findById(uid)
+        .select(["firstName","lastName","age","about","imgUrl","city","gender"]);
+        console.log("jikiop")
+        console.log(data)
+        res.status(200).send(data);
+        //.json({
+    //         "message": "User profile is ready to view.",
+    //         'user': data
+    //     }
+    // );
     }
     catch(err){
-
         res.status(500).send("Error while viewing profile " +err);
+        // res.status(309).send(err);
     }
 });
 profileRouter.patch("/profile/update", authCookie, async (req,res)=>{
     try{
-    const allowedChanges= ["firstName", "lastName", "age","contactNo"];
+    const allowedChanges= ["firstName", "lastName", "age","contactNo","about","city","gender","imgUrl"];
     const body = req.body;
     const user= req.user;
     const isAllowed = Object.keys(body).every((key)=> allowedChanges.includes(key));
@@ -40,10 +38,9 @@ profileRouter.patch("/profile/update", authCookie, async (req,res)=>{
         user[key]=body[key];
     });
     await user.save();
-    res.json({
+    res.status(200).json({
         "message": "user updated succesfullyy",
         "user": user
-
     });
 
     }
@@ -54,7 +51,10 @@ profileRouter.patch("/profile/update", authCookie, async (req,res)=>{
 
 });
 profileRouter.patch("/profile/passwordUpdate", authCookie, async(req,res)=>{
-
+    const user =req.user;
+    const userId= req.user._id;
+    const newPasswd = req.body.newPasswd;
+    
 
 });
 
