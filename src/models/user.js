@@ -70,8 +70,7 @@ userSchema.methods.validatePassword = async function(passwordByUser){
     // return true;
     const isValid = await bcrypt.compare(passwordByUser, user.password);
     // console.log('a');
-    if(isValid) return true;
-    else return false;
+    return isValid;
     }catch(err){
         console.log("error while debugging password! "+err);
     }
@@ -81,7 +80,7 @@ userSchema.methods.getJWT = async function(){
     const user = this;
     const token = jwt.sign({
         _id:user._id
-    },"KEY",{
+    },process.env.KEY,{
         expiresIn: "7d"
     });
     return token;

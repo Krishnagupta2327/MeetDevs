@@ -11,14 +11,7 @@ profileRouter.get('/profile/view' ,authCookie ,async (req,res)=>{
 
         const data= await User.findById(uid)
         .select(["firstName","lastName","age","about","imgUrl","city","gender"]);
-        console.log("jikiop")
-        console.log(data)
         res.status(200).send(data);
-        //.json({
-    //         "message": "User profile is ready to view.",
-    //         'user': data
-    //     }
-    // );
     }
     catch(err){
         res.status(500).send("Error while viewing profile " +err);

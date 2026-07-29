@@ -7,6 +7,9 @@ const User = require("../models/user.js");
 const jwt = require("jsonwebtoken");
 const {authCookie}= require("../middlewares/auth.js")
 const validator = require('validator');
+const sendEmail = require('../utils/sendEmail.js');
+
+
 authRouter.post("/signup", async (req,res) =>{
     try{
         validateUser(req);
@@ -30,27 +33,38 @@ authRouter.post("/login", async (req,res) =>{
         if(!email || !password){
             throw new Error ("Email and Password are requied to login!!!");
         }
+       
         if(!validator.isEmail(email)){
             throw new Error("Email is invalid!!");
         }
-        
+       
         const user =  await User.findOne({
             email:email
         }).select(["firstName","lastName","age","city","imgUrl","about","email","contactNo","password"]);
         if(!user){
             throw new Error("Invalid Credentials!!");
         }
+
         const userPassword = user.password;
         const isValid =   await bcrypt.compare(password, userPassword);
         // const isValid =  await user.validatePassword(password);
         if(!isValid){
             throw new Error("Invalid Credentialss!!");
         }
+    
         const token = jwt.sign({
             _id: user._id
-        },"SECRET_KEY",{
+        },process.env.SECRET_KEY,{
             expiresIn: "7d"
         });
+  
+        const ress = await sendEmail({
+            to: "krishna.kietian@gmail.com",
+            sub: "Login attention",
+            body : `${user.firstName} has login at meetdevs.online`
+        });
+        console.log(ress);
+        // console.log("kkSeff : "+ process.env.secretKey);
         // const data =user.select(["firstName","lastName"]);
         res.cookie("token", token).status(200).json({
             "message":"User logged in succesfully",
@@ -58,6 +72,7 @@ authRouter.post("/login", async (req,res) =>{
         });
     }
     catch(err){
+    
         res.status(300).json({
              "message": `Error while logging in : ${err}`,
               "Error": err.message
@@ -66,8 +81,8 @@ authRouter.post("/login", async (req,res) =>{
     }
 });
 authRouter.post("/logout", authCookie, (req, res)=>{
-   console.log('hiii');
-   res.clearCookie("token");
+  
+    res.clearCookie("token");
 
     res.send(`${req.user.firstName} logged out succesfully`);
 });

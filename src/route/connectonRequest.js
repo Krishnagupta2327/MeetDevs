@@ -9,15 +9,16 @@ connectionRouter.post("/connectionRequest/send/:toUserId/:status",authCookie, as
     const toUserId = req.params.toUserId;
     const fromUserId= req.user._id;
     const status= req.params.status;
-
     const allowedStatus =["interested","ignore"];
+
+    
     try{
-    // if(!allowedStatus.includes(status)){
-    //     throw new Error("status is not allowed!!");
-    // }
+    if(!allowedStatus.includes(status)){
+        throw new Error("status is not allowed!!");
+    }
     const toUser = await User.findById(toUserId);
     if(!toUser){
-        return res.send("UserID is invalid...");
+        return res.status(400).send(" User not found");
 
     }
     const isExisting= await connectionRequest.find({
@@ -54,6 +55,7 @@ connectionRouter.post("/connectionRequest/send/:toUserId/:status",authCookie, as
         res.status(500).send("Error while sending connection request"+err);
     }
 });
+
 connectionRouter.post("/connectionRequest/review/:userId/:status",authCookie, async(req,res)=>{
     const allowedStatus = ["accepted", "rejected"];
     const loggedInUser= req.user;
@@ -75,17 +77,19 @@ connectionRouter.post("/connectionRequest/review/:userId/:status",authCookie, as
                 {
                     toUserId:loggedInUser._id,
                     fromUserId :toReviewUser,
-                    status:"accepted"
+                    status: "ignored"
+                    
                 },
                 {
                     fromUserId:loggedInUser._id,
                     toUserId :toReviewUser,
-                    status:"rejected"
+                    status: "ignored"
                 },
                 {
                     toUserId:loggedInUser._id,
                     fromUserId :toReviewUser,
-                    status:"rejected"
+                    status: "accepted"
+                    
                 },
                 {
                     fromUserId:loggedInUser._id,
@@ -105,18 +109,11 @@ connectionRouter.post("/connectionRequest/review/:userId/:status",authCookie, as
                     status:"interested"
 
                 },
-                {
-                    toUserId: toReviewUser,
-                    fromUserId:loggedInUser._id,
-                    status:"interested"
-                }
+                
             ]
         });
         if(!toReviewRequest){
             throw new Error("You can not review unsend request!!");
-        }
-        else if(toReviewRequest.status != "interested"){
-            throw new Error("you cant review not interested connectionRequest");
         }
         toReviewRequest.status = status;
         const data = await toReviewRequest.save();

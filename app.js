@@ -1,22 +1,20 @@
-// const validator= require('validator');
-// const bcrypt = require('bcrypt');
-// const mongoose = require('mongoose');
-// const jsonwebtoken = require("jsonwebtoken");
-// const {validateUser} = require('./utils/validate.js');
-// const User = require("./models/user.js");
+
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const connectDB = require('./src/config/database.js');
 const authRouter = require('./src/route/auth.js');
 const profileRouter = require('./src/route/profile.js');
+// const paymentRouter = require('./src/route/payment.js');
 const connectionRouter = require('./src/route/connectonRequest.js');
 const userRouter = require("./src/route/user.js")
+const dotenv =require('dotenv')
+dotenv.config();
 const app = express();
 connectDB()
 .then(() => {
     console.log("Connected to DB");
-    app.listen(7777, () => {
+    app.listen(process.env.PORT, () => {
         console.log("Server is running successfully on port 7777");
     });
 })
@@ -42,10 +40,13 @@ app.get("/",(req,res)=>{
    console.log('hii');
    res.send("hii");
 });
+
 app.use("/", authRouter);
-app.use("/",profileRouter)
+app.use("/",profileRouter);
 app.use("/", connectionRouter);
 app.use("/", userRouter);
+// app.use("/", paymentRouter);
+
 
 // const now = new Date();
 // console.log(now.toda);

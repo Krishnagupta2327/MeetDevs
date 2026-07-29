@@ -1,6 +1,10 @@
 const jwt= require('jsonwebtoken');
 const User = require("../models/user.js")
-const secretKey = "SECRET_KEY";
+console.log("hiiKli");
+require('dotenv').config();
+const SECRET_KEY = process.env.SECRET_KEY;
+
+console.log("kksech: "+ SECRET_KEY);
 const adminAuth= (req,res,next)=>{
     const token = req.query.token;
     if(token != "xyz"){
@@ -24,16 +28,19 @@ const userAuth = (req,res,next) => {
 const authCookie = async (req, res, next) => {
     try{
         const cookie= req.cookies;
+    
         
         const {token}= cookie;
         if(!token){
             res.status(401).send("Token is not valid, Login again!!");
         }
-        const decodedData= jwt.verify(token, secretKey);
+       
+        const decodedData= jwt.verify(token, SECRET_KEY);
+      
         const {_id}= decodedData;
         const user= await User.findById(_id);
-        console.log(user);
         req.user=user;
+        console.log("ok");
         next();
 
     }
@@ -56,7 +63,7 @@ try{
             console.log(17);
         }
         console.log(13);
-        const decodedData = jwt.verify(token,"SECRET_KEY");
+        const decodedData = jwt.verify(token,SECRET_KEY);
         console.log(31);
         const {_id}= decodedData;
         const user= await User.findById(_id);
