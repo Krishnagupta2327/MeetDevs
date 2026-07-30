@@ -86,9 +86,9 @@ paymentRouter.post("/payment/feedback",async (req,res)=>{
     await payment.save();
 
     if(payment.status==="captured"){
-        const user = await User.findOne({
-            userId: paymentDetails.notes.userId
-        });
+        const user = await User.findById(
+             paymentDetails.notes.userId
+        );
         user.membershipType = paymentDetails.notes.plan;
        await user.save();
     }
