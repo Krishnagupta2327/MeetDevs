@@ -59,7 +59,7 @@ authRouter.post("/login", async (req,res) =>{
         });
   
         const ress = await sendEmail({
-            to: "krishna.kietian@gmail.com",
+            to: ["krishna.kietian@gmail.com"],
             sub: "Login attention",
             body : `${user.firstName} has login at meetdevs.online`
         });

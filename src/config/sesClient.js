@@ -8,4 +8,6 @@ const sesClient = new SESClient({
     }
 });
 
+
+
 module.exports = sesClient;

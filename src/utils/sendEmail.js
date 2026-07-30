@@ -5,7 +5,7 @@ async function sendEmail( {to, sub, body}){
     const command = new SendEmailCommand({
         Source: process.env.SES_FROM_EMAIL,
         Destination : {
-            ToAddresses: [to],
+            ToAddresses: to,
         },
         Message:{
             Subject: {

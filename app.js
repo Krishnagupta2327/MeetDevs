@@ -9,6 +9,7 @@ const profileRouter = require('./src/route/profile.js');
 const connectionRouter = require('./src/route/connectonRequest.js');
 const userRouter = require("./src/route/user.js")
 const dotenv =require('dotenv')
+require('./src/utils/cronjobs');
 dotenv.config();
 const app = express();
 connectDB()
