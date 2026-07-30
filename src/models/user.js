@@ -61,7 +61,7 @@ const userSchema = new mongoose.Schema({
     },
     membershipType:{
         type: String,
-        enum:["gold", "silver", "non-premium"],
+        enum:["Gold", "Silver", "non-premium",],
         default: "non-premium"
     }
 
