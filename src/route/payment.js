@@ -90,7 +90,7 @@ paymentRouter.post("/payment/feedback",async (req,res)=>{
             userId: paymentDetails.notes.userId
         });
         user.membershipType = paymentDetails.notes.plan;
-
+       await user.save();
     }
     
 
