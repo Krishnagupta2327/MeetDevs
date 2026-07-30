@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const connectDB = require('./src/config/database.js');
 const authRouter = require('./src/route/auth.js');
 const profileRouter = require('./src/route/profile.js');
+const paymentRouter = require('./src/route/payment');
 // const paymentRouter = require('./src/route/payment.js');
 const connectionRouter = require('./src/route/connectonRequest.js');
 const userRouter = require("./src/route/user.js")
@@ -46,6 +47,7 @@ app.use("/", authRouter);
 app.use("/",profileRouter);
 app.use("/", connectionRouter);
 app.use("/", userRouter);
+app.use("/", paymentRouter)
 // app.use("/", paymentRouter);
 
 

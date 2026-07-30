@@ -58,6 +58,11 @@ const userSchema = new mongoose.Schema({
     gender:{
         type: String,
         enum:["male","female"]
+    },
+    membershipType:{
+        type: String,
+        enum:["gold", "silver", "non-premium"],
+        default: "non-premium"
     }
 
 },{

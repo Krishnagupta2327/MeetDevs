@@ -1,27 +1,64 @@
-// const express = require("express");
-// const paymentRouter =  express.Router();
+const express = require('express');
+const paymentRouter = express.Router();
+const {authCookie}  = require('../middlewares/auth');
+const rzpInstance = require('../config/razorpayInstance');
+const Payment = require("../models/payment");
 
-// const razorpayInstance = require('../utils/razorpay');
-// const userAuth = require('../middlewares/auth');
+paymentRouter.post("/createPayment",  authCookie, async (req,res)=>{
+    const plan = req?.body?.plan;
+    const {_id , firstName, lastName, email}= req.user;
 
-// // paymentRouter.post("/payment/create",userAuth, async (req,res)=>{
-// //         const {amount,plan} = req.body;
-// //         const userId= req.user._id;
-// //         const order = await razorpayInstance.orders.create({
-// //             "userId" : userId,
-// //             "amount": amount,
-// //             "currency": "INR",
-// //             "notes": {
-// //                 "firstName":req.user.firstName,
-// //                 "email": req.user.email,
-// //                 "plan":plan,
-// //             }
+    const data = {
+        "amount": plan === "Gold"? 799:499,
+    }
 
-// //         });
-// //         res.send("order send");
+    try{
+        const order = await rzpInstance.orders.create({
+            "amount":data.amount,
+            "currency":"INR",
+            "receipt":"receipt1",
+            "notes":
+                {
+                    firstName,
+                    lastName,
+                    email,
+                    "userId":_id
+                }
+
+            }
+        );
+        const payment  = new Payment({
+            "amount":order.amount,
+            "currency": order.currency,
+            "receipt": order.receipt,
+            "notes": order.notes,
+            "userId": order.notes.userId,
+            "status": order.status,
+            "orderId": order.id
+
+            
+        });
+        await payment.save();
+
+    
+
+        res.json({
+            "message":"payment created successfully",
+            "data": order
+        });
+    }catch(err){
+        console.log(err);
+        res.json({
+            "message":"some error occured",
+            "data": err.message
+        });
+    }
 
 
-// // });
+});
 
-// module.exports = {paymentRouter};
 
+
+module.exports = paymentRouter;
+// module.exports = paymentRouter;
+// module.exports = paymnetRouter;

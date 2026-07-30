@@ -10,7 +10,7 @@ profileRouter.get('/profile/view' ,authCookie ,async (req,res)=>{
        const uid= req.user._id;
 
         const data= await User.findById(uid)
-        .select(["firstName","lastName","age","about","imgUrl","city","gender"]);
+        .select(["firstName","lastName","age","about","imgUrl","city","gender","membershipType"]);
         res.status(200).send(data);
     }
     catch(err){

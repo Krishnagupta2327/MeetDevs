@@ -40,7 +40,7 @@ authRouter.post("/login", async (req,res) =>{
        
         const user =  await User.findOne({
             email:email
-        }).select(["firstName","lastName","age","city","imgUrl","about","email","contactNo","password"]);
+        }).select(["firstName","lastName","age","city","imgUrl","about","email","contactNo","password","membershipType"]);
         if(!user){
             throw new Error("Invalid Credentials!!");
         }
@@ -63,9 +63,8 @@ authRouter.post("/login", async (req,res) =>{
             sub: "Login attention",
             body : `${user.firstName} has login at meetdevs.online`
         });
-        console.log(ress);
-        // console.log("kkSeff : "+ process.env.secretKey);
-        // const data =user.select(["firstName","lastName"]);
+        
+ 
         res.cookie("token", token).status(200).json({
             "message":"User logged in succesfully",
             "data": user

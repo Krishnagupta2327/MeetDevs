@@ -22,7 +22,7 @@ userRouter.get("/user/requests/recieved", authCookie,async (req, res)=>{
     const connectionUsers = await Promise.all(
         allRequests.map(async (request) => {
           return await User.findById(request.fromUserId).select(
-            "firstName lastName age city imgUrl about email contactNo"
+            "firstName lastName age city imgUrl about email contactNo membershipType"
           );
         })
       );
