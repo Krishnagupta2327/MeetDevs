@@ -75,7 +75,7 @@ paymentRouter.post("/payment/feedback",async (req,res)=>{
     if(!resp) {
         return res.status(400).send("webhook signature is not valid");
     }
-    const payment = Payment.findOne({
+    const payment = await Payment.findOne({
         "orderId":resp.order_id
     });
     payment.status= resp.status;
