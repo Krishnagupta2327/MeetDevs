@@ -60,7 +60,7 @@ paymentRouter.post("/payment/create",  authCookie, async (req,res)=>{
 });
 
 paymentRouter.post("/payment/feedback",async (req,res)=>{
-    const webhookSignature = req.get("x-Razorpay-Signature");
+    const webhookSignature = req.get("X-Razorpay-Signature");
     const webhookSecret= process.env.WEBHOOK_SECRET;
     const resp = validateWebhookSignature(
         JSON.stringify(req.body),
