@@ -36,6 +36,9 @@ const paymentSchema = new mongoose.Schema({
         },
         email:{
             type:String
+        },
+        plan:{
+            type:String
         }
     }
 
