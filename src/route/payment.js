@@ -62,6 +62,7 @@ paymentRouter.post("/payment/create",  authCookie, async (req,res)=>{
 });
 
 paymentRouter.post("/payment/feedback",async (req,res)=>{
+
     const webhookSignature = req.get("X-Razorpay-Signature");
     const webhookSecret= process.env.WEBHOOK_SECRET;
     const resp = validateWebhookSignature(
@@ -75,23 +76,28 @@ paymentRouter.post("/payment/feedback",async (req,res)=>{
     if(!resp) {
         return res.status(400).send("webhook signature is not valid");
     }
+    try{
+        const paymentDetails = req.body.payload.payment.entity;
+        console.log(paymentDetails);
     const payment = await Payment.findOne({
-        "orderId":resp.order_id
+        "orderId":paymentDetails.order_id
     });
-    payment.status= resp.status;
+    payment.status= paymentDetails.status;
     await payment.save();
 
     if(payment.status==="captured"){
-        const user = User.findOne({
-            userId: resp.notes.userId
+        const user = await User.findOne({
+            userId: paymentDetails.notes.userId
         });
-        user.membershipType = resp.notes.plan;
+        user.membershipType = paymentDetails.notes.plan;
 
     }
-    const paymentDetails = req.body.payload.Payment.entity;
-    console.log(paymentDetails);
+    
 
     return res.status(200).send("webhook captured successfully");
+}catch(err){
+    res.status(200).send("ok");
+}
 });
 
 
