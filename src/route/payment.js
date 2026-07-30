@@ -4,12 +4,14 @@ const {authCookie}  = require('../middlewares/auth');
 const rzpInstance = require('../config/razorpayInstance');
 const Payment = require("../models/payment");
 
-paymentRouter.post("/createPayment",  authCookie, async (req,res)=>{
+const {validateWebhookSignature} =require("razorpay/dist/utils/razorpay-utils");
+
+paymentRouter.post("/payment/create",  authCookie, async (req,res)=>{
     const plan = req?.body?.plan;
     const {_id , firstName, lastName, email}= req.user;
 
     const data = {
-        "amount": plan === "Gold"? 799:499,
+        "amount": plan === "Gold"? 79900:49900,
     }
 
     try{
@@ -57,6 +59,26 @@ paymentRouter.post("/createPayment",  authCookie, async (req,res)=>{
 
 });
 
+paymentRouter.post("/payment/feedback",async (req,res)=>{
+    const webhookSignature = req.get("x-Razorpay-Signature");
+    const webhookSecret= process.env.WEBHOOK_SECRET;
+    const resp = validateWebhookSignature(
+        JSON.stringify(req.body),
+        webhookSignature,
+        webhookSecret
+
+    );
+
+
+    if(!resp) {
+        return res.status(400).send("webhook signature is not valid");
+    }
+
+    const paymentDetails = req.body.payload.Payment.entity;
+    console.log(paymentDetails);
+
+    return res.status(200).send("ok");
+})
 
 
 module.exports = paymentRouter;
