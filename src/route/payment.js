@@ -101,9 +101,14 @@ paymentRouter.post("/payment/feedback",async (req,res)=>{
 });
 
 paymentRouter.get('/payment/verify',authCookie, (req,res)=>{
-    const {membershipType} = req.user;
+  try{  const {membershipType} = req.user;
     res.status(203).send(membershipType);
-});
+    }catch(err) {
+        res.send(err);
+    }
+}
+
+);
 module.exports = paymentRouter;
 // module.exports = paymentRouter;
 // module.exports = paymnetRouter;

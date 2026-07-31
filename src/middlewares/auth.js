@@ -40,7 +40,7 @@ const authCookie = async (req, res, next) => {
         const {_id}= decodedData;
         const user= await User.findById(_id);
         req.user =user;
-        console.log("ok");
+       
         next();
 
     }
