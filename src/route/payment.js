@@ -100,7 +100,10 @@ paymentRouter.post("/payment/feedback",async (req,res)=>{
 }
 });
 
-
+paymentRouter.get('/payment/verify',authCookie, (req,res)=>{
+    const {membershipType} = req.user;
+    res.status(203).send(membershipType);
+});
 module.exports = paymentRouter;
 // module.exports = paymentRouter;
 // module.exports = paymnetRouter;
