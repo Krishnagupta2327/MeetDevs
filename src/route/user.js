@@ -68,6 +68,21 @@ userRouter.get("/user/requests/recieved", authCookie,async (req, res)=>{
 //         );
 //     }
 // });
+userRouter.get("/user/info/:userId",authCookie, async (req,res)=>{
+    try{
+        const userId = req.params.userId;
+        const user =await User.findById(userId).select("firstName lastName age city imgUrl about email contactNo membershipType");
+        res.send({
+            message:"user fetched successfully",
+            data: user
+        })
+    }catch(err){
+        res.send({message:"some error occured",
+            data:err
+        })
+    }
+
+});
 userRouter.get("/user/connections", authCookie, async (req, res) => {
     try {
         const connections = await connectionRequest.find({

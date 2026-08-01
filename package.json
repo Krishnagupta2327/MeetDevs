@@ -17,6 +17,7 @@
     "date-fns": "^4.4.0",
     "dotenv": "^17.4.2",
     "express": "^5.1.0",
+    "http": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.18.0",
     "mongoose": "^8.18.0",
@@ -24,6 +25,7 @@
     "nodemon": "^3.1.10",
     "playwright": "^1.60.0",
     "razorpay": "^2.9.8",
+    "socket.io": "^4.8.3",
     "validator": "^13.15.15"
   }
 }

@@ -6,17 +6,25 @@ const connectDB = require('./src/config/database.js');
 const authRouter = require('./src/route/auth.js');
 const profileRouter = require('./src/route/profile.js');
 const paymentRouter = require('./src/route/payment');
+const chatRouter = require('./src/route/chat');
 // const paymentRouter = require('./src/route/payment.js');
 const connectionRouter = require('./src/route/connectonRequest.js');
+const initializeSocket = require("./src/utils/socket.js");
 const userRouter = require("./src/route/user.js")
+const {Server } = require('socket.io');
+const app = express();
+
+const http = require('http');
+const server= http.createServer(app);
+
+
 const dotenv =require('dotenv')
 require('./src/utils/cronjobs');
 dotenv.config();
-const app = express();
 connectDB()
 .then(() => {
     console.log("Connected to DB");
-    app.listen(process.env.PORT, () => {
+    server.listen(process.env.PORT, () => {
         console.log("Server is running successfully on port 7777");
     });
 })
@@ -24,7 +32,7 @@ connectDB()
     console.log("Error connecting to DB!!",err);
 });
 
-
+initializeSocket(server);
 app.use(express.json());
 app.use(cookieParser());
 
@@ -33,13 +41,13 @@ app.use(cors({
     credentials:true
 }));
 
+
 app.use((req,res,next)=>{
     console.log(req.method, req.url);
     next();
 });
 app.get("/",(req,res)=>{
-   " hd";
-   console.log('hii');
+   
    res.send("hii");
 });
 
@@ -47,6 +55,7 @@ app.use("/", authRouter);
 app.use("/",profileRouter);
 app.use("/", connectionRouter);
 app.use("/", userRouter);
+app.use("/",chatRouter);
 app.use("/", paymentRouter)
 // app.use("/", paymentRouter);
 
