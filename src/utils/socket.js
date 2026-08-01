@@ -8,10 +8,14 @@ const generateRoomId =({userId, targetUserId})=>{
 const initializeSocket=(server)=>{
 
     const io = socket(server,{
-        cors:{
-            origin:"192.168.0.100:5173",
-            credentials:true
+        cors: {
+            origin: [
+                "http://localhost:5173",
+                "https://meetdevs.online"
+            ],
+            credentials: true
         }
+        
     });
     io.on('connection',(socket)=>{
         //handle socket req
